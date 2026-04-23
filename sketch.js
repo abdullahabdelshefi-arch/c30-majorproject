@@ -10,7 +10,7 @@
 //    found out that null is something you intentionally want it to be unknown searched and used vedo to find out what it meant when I saw it before 
 
 
-//  Variables 
+// Variables 
 let player;
 let enemies = [];
 let bullets = [];
@@ -20,7 +20,8 @@ let score = 0;
 let bestScore = 0;
 let timer = 60;
 let difficulty = "normal";
-
+let menuBackground;
+let playBackground;
 
 // Players Class (You)
 class Player {
@@ -91,7 +92,7 @@ class Enemy {
 }
 
 
-//  Bigger Enemy (more shots to kill)
+// Bigger Enemy (more shots to kill)
 class Boss {
   constructor() {
     this.x = width / 2;
@@ -138,10 +139,28 @@ class Bullet {
 }
 
 
+function preload(){
+  menuBackground = loadImage("menu.jpg");
+  playBackground = loadImage("background.jpg");
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
   background(220);
+  if (gameState === "menu"){
+    menuScreen();
+  } 
+  else if (gameState === "play"){
+    gameScreen();
+  } 
+  else if (gameState === "gameover"){
+    gameOverScreen();
+  } 
+  else if (gameState === "totutorial"){
+    howScreen();
+  } 
+
 }
