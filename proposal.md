@@ -13,7 +13,7 @@ My project will be an "reaction time" game, where there are ai figures ruuning a
 - Background Music
 - Cool background 
 - Sound effects when you attack/die
-- computer that follows you and if touches you die
+- Computer Bot that follows you and if touches you die
 - Best score 
 
 ## Nice To Have
