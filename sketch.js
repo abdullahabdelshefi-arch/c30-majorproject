@@ -23,6 +23,7 @@ let difficulty = "normal";
 let menuBackground;
 let playBackground;
 
+
 // Players Class (You)
 class Player {
   constructor(x, y) {
@@ -142,25 +143,123 @@ class Bullet {
 function preload(){
   menuBackground = loadImage("menu.jpg");
   playBackground = loadImage("background.jpg");
+  // music = loadSound()
 }
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  
+  player = new Player(width / 2, height / 2);
+
+  // Getting the best score 
+  let saved = getItem("bestScore");
+  if (saved !== 0){
+    bestScore = saved;
+  }
+  // music.loop(); music.setVolume(0.5);
 }
 
+
+// Draws everything
 function draw() {
-  background(220);
   if (gameState === "menu"){
+    image(menuBackground, 0, 0, width, height);
     menuScreen();
   } 
   else if (gameState === "play"){
+    image(playBackground, 0, 0, width, height);
     gameScreen();
   } 
   else if (gameState === "gameover"){
     gameOverScreen();
   } 
   else if (gameState === "totutorial"){
+    image(playBackground, 0, 0, width, height);
     howScreen();
   } 
-
 }
+
+
+// Menu Screen
+function menuScreen() {
+  textAlign(CENTER);
+  fill(255);
+  
+  textSize(40);
+  text("Reflex Arena", width / 2, height / 3);
+  
+  textSize(20);
+  text("1 Easy | 2 Normal | 3 Hard | 4 Totutorial", width / 2, height / 1.35);
+}
+
+
+// Totutorial screen
+function howScreen() {
+  textAlign(CENTER);
+  fill(255);
+  textSize(30);
+  text("How To Play", width / 2, 150);
+  textSize(18);
+}
+
+
+// Inside the gameScreen
+function gameScreen(){
+  // makes the music loop but dont know how to put music yet (where to get it from)
+  // if (music && !music.isPlaying()) music.loop();
+}
+
+
+// Game over screen
+function gameOverScreen() {
+  textAlign(CENTER);
+  fill(255);
+  textSize(40);
+  text("Game Over", width / 2, height / 2 - 50);
+  textSize(20);
+  text("Game Over", width/2, height/2);
+  text(`Best Score: ${bestScore}`, width/2  + 20, height/2 + 100);
+}
+
+
+function endGame() {
+  gameState = "gameover";
+  if (score > bestScore) {
+    bestScore = score;
+    storeItem("bestScore", bestScore);
+  }
+  // if (music) music.stop();
+}
+
+
+// When keys are pressed to go back to a certian area
+function keyPressed() {
+  if (gameState === "menu") {
+    if (key === "1"){
+      startGame("easy");
+    } 
+    if (key === "2"){
+      startGame("normal");
+    }
+    if (key === "3"){
+      startGame("hard");
+    }
+    if (key === "4"){
+      gameState = "totutorial";
+    }
+  }
+  // Keys not to go to a specific mode
+  if (gameState === "totutorial" && key === "m") {
+    gameState = "menu";
+  }
+
+  if (gameState === "play" && key === "") {
+    bullets.push(new Bullet(player.x, player.y));
+  }
+
+  if (gameState === "gameover" && key === "r") {
+    gameState = "menu";
+  }
+}
+
