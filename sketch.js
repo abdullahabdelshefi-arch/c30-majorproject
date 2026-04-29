@@ -64,7 +64,7 @@ class Player {
   }
 
   display() {
-    fill(0, 200, 255);
+    fill(255);
     circle(this.x, this.y, this.size);
   }
 }
@@ -205,9 +205,95 @@ function howScreen() {
 
 
 // Inside the gameScreen
-function gameScreen(){
-  // makes the music loop but dont know how to put music yet (where to get it from)
+function gameScreen() {
+  player.move();
+  player.display();
+
+  // Spawn enemies seeing if each frame count and spawns new
+  if (frameCount % spawnRate() === 0) {
+    enemies.push(new Enemy(random(width), random(height)));
+  }
+
+  // Spawn boss once when you get to a certian time
+  if (timer < 30 && boss === null) {
+    boss = new Boss();
+  }
+
+  //  Normal enemies
+  for (let e of enemies) {
+    e.follow(player);
+    e.display();
+
+    // Checks the distance bettwen you and the enimies
+    if (dist(player.x, player.y, e.x, e.y) < 20) {
+      endGame();
+    }
+  }
+
+  // Bullets moveing and displaying
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    bullets[i].move();
+    bullets[i].display();
+    // Checks the distance between the bullets and the enemies
+    for (let j = enemies.length - 1; j >= 0; j--) {
+      if (dist(bullets[i].x, bullets[i].y, enemies[j].x, enemies[j].y) < 15) {
+        enemies.splice(j, 1);
+        bullets.splice(i, 1);
+        score += 20;
+        break;
+      }
+    }
+  }
+
+  // Boss showing and displaying
+  if (boss) {
+    boss.move(player);
+    boss.display();
+    // checks distance between you and boss
+    if (dist(player.x, player.y, boss.x, boss.y) < 40) {
+      endGame();
+    }
+    // checks distance between bullets and boss
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      if (dist(bullets[i].x, bullets[i].y, boss.x, boss.y) < 40) {
+        boss.health -= 5;
+        bullets.splice(i, 1);
+      }
+    }
+    // checks if boss is dead
+    if (boss.health <= 0) {
+      score += 500;
+      boss = null;
+    }
+  }
+
+  // updating the game
+  score++;
+  timer -= 1 / 60;
+
+  fill(255);
+  textSize(16);
+  text(`Score: ${score}`, 70, 20);
+  text(`Time: ${timer}`, 70, 40);
   // if (music && !music.isPlaying()) music.loop();
+
+  if (timer <= 0) {
+    endGame();
+  }
+}
+
+  
+// How fast the Particles spawn
+function spawnRate() {
+  if (difficulty === "easy"){
+    return 120;
+  } 
+  if (difficulty === "normal"){
+    return 80;
+  } 
+  if (difficulty === "hard"){
+    return 50;
+  } 
 }
 
 
@@ -218,8 +304,9 @@ function gameOverScreen() {
   textSize(40);
   text("Game Over", width / 2, height / 2 - 50);
   textSize(20);
-  text("Game Over", width/2, height/2);
-  text(`Best Score: ${bestScore}`, width/2  + 20, height/2 + 100);
+  text("Score: " + score, width / 2, height / 2);
+  text("Best: " + bestScore, width / 2, height / 2 + 30);
+  text("Press R to Restart", width / 2, height / 2 + 80);
 }
 
 
@@ -263,3 +350,16 @@ function keyPressed() {
   }
 }
 
+
+// Seeing the diffulty mode and seeting up the game
+function startGame(mode) {
+  difficulty = mode;
+  gameState = "play";
+
+  enemies = [];
+  bullets = [];
+  boss = null;
+
+  score = 0;
+  timer = 60;
+}
