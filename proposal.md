@@ -8,12 +8,12 @@ My project will be an "reaction time" game, where there are ai figures ruuning a
     - Easy✅
     - Meduim✅
     - Hard✅
-- Can hold WASD rather then pushing the bottons
-- An attack laser while pressing space
+- Can hold WASD rather then pushing the bottons✅
+- An attack laser while pressing space✅
 - Background Music
 - Cool background✅
 - Sound effects when you attack/die
-- Computer Bot that follows you and if touches you die
+- Computer Bot that follows you and if touches you die✅
 - Best Score 
 
 ## Nice To Have
