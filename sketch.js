@@ -18,10 +18,12 @@ let boss = null;
 let gameState = "menu";
 let score = 0;
 let bestScore = 0;
-let timer = 60;
 let difficulty = "normal";
 let menuBackground;
 let playBackground;
+let startTime;
+let totalTime = 60;
+
 
 
 // Players Class (You)
@@ -65,7 +67,7 @@ class Player {
 
   display() {
     fill(255);
-    circle(this.x, this.y, this.size);
+    circle(this.x, this.y, this.radius);
   }
 }
 
@@ -206,6 +208,8 @@ function howScreen() {
 
 // Inside the gameScreen
 function gameScreen() {
+  let timeLeft = totalTime - (millis() - startTime) / 1000;
+  
   player.move();
   player.display();
 
@@ -215,7 +219,7 @@ function gameScreen() {
   }
 
   // Spawn boss once when you get to a certian time
-  if (timer < 30 && boss === null) {
+  if (timeLeft < 30 && boss === null) {
     boss = new Boss();
   }
 
@@ -234,6 +238,7 @@ function gameScreen() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     bullets[i].move();
     bullets[i].display();
+    
     // Checks the distance between the bullets and the enemies
     for (let j = enemies.length - 1; j >= 0; j--) {
       if (dist(bullets[i].x, bullets[i].y, enemies[j].x, enemies[j].y) < 15) {
@@ -249,10 +254,12 @@ function gameScreen() {
   if (boss) {
     boss.move(player);
     boss.display();
+    
     // checks distance between you and boss
     if (dist(player.x, player.y, boss.x, boss.y) < 40) {
       endGame();
     }
+    
     // checks distance between bullets and boss
     for (let i = bullets.length - 1; i >= 0; i--) {
       if (dist(bullets[i].x, bullets[i].y, boss.x, boss.y) < 40) {
@@ -260,6 +267,7 @@ function gameScreen() {
         bullets.splice(i, 1);
       }
     }
+    
     // checks if boss is dead
     if (boss.health <= 0) {
       score += 500;
@@ -269,15 +277,14 @@ function gameScreen() {
 
   // updating the game
   score++;
-  timer -= 1 / 60;
 
   fill(255);
   textSize(16);
   text(`Score: ${score}`, 70, 20);
-  text(`Time: ${timer}`, 70, 40);
+  text(`Time: ${timeLeft}`, 70, 40);
   // if (music && !music.isPlaying()) music.loop();
 
-  if (timer <= 0) {
+  if (timeLeft <= 0) {
     endGame();
   }
 }
@@ -299,6 +306,7 @@ function spawnRate() {
 
 // Game over screen
 function gameOverScreen() {
+  background(0);
   textAlign(CENTER);
   fill(255);
   textSize(40);
@@ -341,7 +349,7 @@ function keyPressed() {
     gameState = "menu";
   }
 
-  if (gameState === "play" && key === "") {
+  if (gameState === "play" && key === " ") {
     bullets.push(new Bullet(player.x, player.y));
   }
 
@@ -360,6 +368,6 @@ function startGame(mode) {
   bullets = [];
   boss = null;
 
+  startTime = millis();
   score = 0;
-  timer = 60;
 }
