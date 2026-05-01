@@ -25,7 +25,6 @@ let startTime;
 let totalTime = 60;
 
 
-
 // Players Class (You)
 class Player {
   constructor(x, y) {
@@ -276,15 +275,16 @@ function gameScreen() {
   }
 
   // updating the game
-  score++;
 
+  score++;
   fill(255);
   textSize(16);
   text(`Score: ${score}`, 70, 20);
-  text(`Time: ${timeLeft}`, 70, 40);
+  text("Time:" + floor(timeLeft), 70, 40);
   // if (music && !music.isPlaying()) music.loop();
 
   if (timeLeft <= 0) {
+    score--;
     endGame();
   }
 }
