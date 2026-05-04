@@ -14,15 +14,18 @@
 let player;
 let enemies = [];
 let bullets = [];
-let boss = null;
+let boss = [];
 let gameState = "menu";
 let score = 0;
 let bestScore = 0;
 let difficulty = "normal";
 let menuBackground;
 let playBackground;
+let spaceShip;
 let startTime;
 let totalTime = 60;
+let tutorialStep = 0;
+let tutorialTimer = 0;
 
 
 // Players Class (You)
@@ -83,15 +86,38 @@ class Enemy {
 
   // Computer Following You
   follow(player) {
-    this.x += (player.x - this.x) * 0.01 * this.speed;
-    this.y += (player.y - this.y) * 0.01 * this.speed;
+    let dx = player.x - this.x;
+    let dy = player.y - this.y;
+    let d = dist(this.x, this.y, player.x, player.y);
+
+    this.x += dx / d * this.speed;
+    this.y += dy / d * this.speed;
+
+    // telportation for hard and meduim
+    if (difficulty === "normal" || difficulty === "hard") {
+      if (this.x < 0){
+        this.x = width;
+      }
+      if (this.x > width){
+        this.x = 0;
+      } 
+      if (this.y < 0){
+        this.y = height;
+      }
+      if (this.y > height){
+        this.y = 0;
+      } 
+    }
   }
+
+
 
   display() {
     fill(255, 60, 60);
     rect(this.x, this.y, this.width, this.height);
   }
 }
+
 
 
 // Bigger Enemy (more shots to kill)
@@ -106,11 +132,13 @@ class Boss {
 
   move(player) {
     this.x += (player.x - this.x) * 0.05;
+    this.y += (player.y - this.y) *0.05;
   }
 
   display() {
     fill(200, 0, 200);
     rect(this.x, this.y, this.width, this.height);
+    
     // Writing 
     fill(255);
     textAlign(CENTER);
@@ -120,7 +148,7 @@ class Boss {
 }
 
 
-// Shots that the you shot 
+// Sets the bullet class 
 class Bullet {
   constructor(x, y) {
     this.x = x;
@@ -144,6 +172,7 @@ class Bullet {
 function preload(){
   menuBackground = loadImage("menu.jpg");
   playBackground = loadImage("background.jpg");
+  spaceShip = loadImage("space.avif");
   // music = loadSound()
 }
 
@@ -197,12 +226,53 @@ function menuScreen() {
 
 // Totutorial screen
 function howScreen() {
-  textAlign(CENTER);
+  // text
   fill(255);
-  textSize(30);
-  text("How To Play", width / 2, 150);
-  textSize(18);
-}
+  textAlign(CENTER);
+  textSize(20);
+
+  player.display();
+
+  // STEP 1: movement
+  if (tutorialStep === 0) {
+    text("Use WASD to move", width/2, 100);
+    player.move();
+
+    tutorialTimer++;
+    if (tutorialTimer > 180) {
+      tutorialStep = 1;
+      tutorialTimer = 0;
+    }
+  }
+
+  // STEP 2: shooting
+  else if (tutorialStep === 1) {
+    text("Press SPACE to shoot", width/2, 100);
+    
+    tutorialTimer++;
+    if (tutorialTimer > 180) {
+      tutorialStep = 2;
+      tutorialTimer = 0;
+    }
+  }
+
+  // STEP 3: enemy example
+  else if (tutorialStep === 2) {
+    text("Avoid enemies!","Press M for menu ", width/2, 100);
+
+    if (frameCount % 100 === 0) {
+      enemies.push(new Enemy(random(width), random(height)));
+    }
+
+    for (let e of enemies) {
+      e.follow(player);
+      e.display();
+    }
+
+    player.move();
+  }
+}	
+
 
 
 // Inside the gameScreen
@@ -218,7 +288,7 @@ function gameScreen() {
   }
 
   // Spawn boss once when you get to a certian time
-  if (timeLeft < 30 && boss === null) {
+  if (timeLeft < 30 && boss.length === 0) {
     boss = new Boss();
   }
 
@@ -251,13 +321,14 @@ function gameScreen() {
 
   // Boss showing and displaying
   if (boss) {
-    boss.move(player);
-    boss.display();
-    
-    // checks distance between you and boss
-    if (dist(player.x, player.y, boss.x, boss.y) < 40) {
-      endGame();
+    for (let b of boss) {
+      b.move(player);
+      b.display();
+      if (dist(player.x, player.y, b.x, b.y) < 40) {
+        endGame();
+      }
     }
+
     
     // checks distance between bullets and boss
     for (let i = bullets.length - 1; i >= 0; i--) {
@@ -270,7 +341,7 @@ function gameScreen() {
     // checks if boss is dead
     if (boss.health <= 0) {
       score += 500;
-      boss = null;
+      boss = [];
     }
   }
 
@@ -300,6 +371,8 @@ function spawnRate() {
   } 
   if (difficulty === "hard"){
     return 50;
+    boss.push(new Boss());
+    boss.push(new Boss());
   } 
 }
 
@@ -366,7 +439,7 @@ function startGame(mode) {
 
   enemies = [];
   bullets = [];
-  boss = null;
+  boss = 0;
 
   startTime = millis();
   score = 0;
