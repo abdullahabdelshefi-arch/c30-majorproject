@@ -14,7 +14,7 @@ My project will be an "reaction time" game, where there are ai figures ruuning a
 - Cool background✅
 - Sound effects when you attack/die
 - Computer Bot that follows you and if touches you die✅
-- Best Score 
+- Best Score ✅
 
 ## Nice To Have
 - Many diffrent waves in each level not just one 
