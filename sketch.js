@@ -109,9 +109,6 @@ class Enemy {
       } 
     }
   }
-
-
-
   display() {
     fill(255, 60, 60);
     rect(this.x, this.y, this.width, this.height);
