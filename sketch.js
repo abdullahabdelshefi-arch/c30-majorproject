@@ -22,6 +22,7 @@ let difficulty = "normal";
 let menuBackground;
 let playBackground;
 let spaceShip;
+let alienShip;
 let startTime;
 let totalTime = 60;
 let tutorialStep = 0;
@@ -170,6 +171,7 @@ function preload(){
   menuBackground = loadImage("menu.jpg");
   playBackground = loadImage("background.jpg");
   spaceShip = loadImage("space.avif");
+  alienShip =  loadImage("alienship.jpg");
   // music = loadSound()
 }
 
