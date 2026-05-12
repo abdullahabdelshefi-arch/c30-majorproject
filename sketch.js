@@ -1,20 +1,21 @@
+
 // Sapce Battle
-// Abdullah Abdelshafi 
+// Abdullah Abdelshafi
 // 4/22/2026
 //
 // Extra for Experts:
 // - Sound Effects
-// - Best Score from same browser (local) 
-// - Searched how the computer can follow the player 
-// - Used null which isnt the same as just unknown; 
-//    found out that null is something you intentionally want it to be unknown searched and used vedo to find out what it meant when I saw it before 
+// - Best Score from same browser (local)
+// - Searched how the computer can follow the player
+// - Used null which isnt the same as just unknown;
+//    found out that null is something you intentionally want it to be unknown searched and used vedo to find out what it meant when I saw it before
 
 
-// Variables 
+// Variables
 let player;
 let enemies = [];
 let bullets = [];
-let boss = [];
+let boss = null;
 let gameState = "menu";
 let score = 0;
 let bestScore = 0;
@@ -27,6 +28,24 @@ let startTime;
 let totalTime = 60;
 let tutorialStep = 0;
 let tutorialTimer = 0;
+let lastShot = 0;
+let shootCooldown = 300;
+let shootSound;
+let deathSound;
+let music;
+
+
+function preload(){
+  menuBackground = loadImage("menu.jpg");
+  playBackground = loadImage("background.jpg");
+  spaceShip = loadImage("space.avif");
+  alienShip =  loadImage("alienship.jpg");
+
+  // // SOUND FILES
+  // shootSound = loadSound("shoot.mp3");
+  // deathSound = loadSound("death.mp3");
+  // music = loadSound("music.mp3");
+}
 
 
 // Players Class (You)
@@ -38,20 +57,22 @@ class Player {
     this.speed = 5;
   }
 
+
   // WASD movement with telportations
   move() {
     if (keyIsDown(65)){
-      this.x -= this.speed; 
+      this.x -= this.speed;
     }
     if (keyIsDown(68)) {
-      this.x += this.speed; 
+      this.x += this.speed;
     }
     if (keyIsDown(87)) {
       this.y -= this.speed;
-    } 
-    if (keyIsDown(83)) {
-      this.y += this.speed; 
     }
+    if (keyIsDown(83)) {
+      this.y += this.speed;
+    }
+
 
     //  Telportation
     if (this.x + this.radius < 0) {
@@ -66,11 +87,11 @@ class Player {
     if (this.y - this.radius > height) {
       this.y -= height;
     }
+    this.x = constrain(this.x, this.radius, width - this.radius);
+    this.y = constrain(this.y, this.radius, height - this.radius);
   }
-
   display() {
-    fill(255);
-    circle(this.x, this.y, this.radius);
+    image(spaceShip, this.x - 25, this.y - 25, 50, 50);
   }
 }
 
@@ -85,14 +106,17 @@ class Enemy {
     this.height = 20;
   }
 
+
   // Computer Following You
   follow(player) {
     let dx = player.x - this.x;
     let dy = player.y - this.y;
     let d = dist(this.x, this.y, player.x, player.y);
 
+
     this.x += dx / d * this.speed;
     this.y += dy / d * this.speed;
+
 
     // telportation for hard and meduim
     if (difficulty === "normal" || difficulty === "hard") {
@@ -101,21 +125,19 @@ class Enemy {
       }
       if (this.x > width){
         this.x = 0;
-      } 
+      }
       if (this.y < 0){
         this.y = height;
       }
       if (this.y > height){
         this.y = 0;
-      } 
+      }
     }
   }
   display() {
-    fill(255, 60, 60);
-    rect(this.x, this.y, this.width, this.height);
+    image(alienShip, this.x, this.y, this.width, this.height);
   }
 }
-
 
 
 // Bigger Enemy (more shots to kill)
@@ -128,16 +150,18 @@ class Boss {
     this.height = 60;
   }
 
+
   move(player) {
     this.x += (player.x - this.x) * 0.05;
     this.y += (player.y - this.y) *0.05;
   }
 
+
   display() {
     fill(200, 0, 200);
     rect(this.x, this.y, this.width, this.height);
-    
-    // Writing 
+  
+    // Writing
     fill(255);
     textAlign(CENTER);
     textSize(12);
@@ -146,7 +170,7 @@ class Boss {
 }
 
 
-// Sets the bullet class 
+// Sets the bullet class
 class Bullet {
   constructor(x, y) {
     this.x = x;
@@ -155,7 +179,6 @@ class Bullet {
     this.width = 5;
     this.height = 10;
   }
-
   move() {
     this.y -= this.speed;
   }
@@ -167,26 +190,20 @@ class Bullet {
 }
 
 
-function preload(){
-  menuBackground = loadImage("menu.jpg");
-  playBackground = loadImage("background.jpg");
-  spaceShip = loadImage("space.avif");
-  alienShip =  loadImage("alienship.jpg");
-  // music = loadSound()
-}
-
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  
+ 
   player = new Player(width / 2, height / 2);
-
-  // Getting the best score 
+  
+  // Getting the best score
   let saved = getItem("bestScore");
-  if (saved !== 0){
+  if (saved !== null){
     bestScore = saved;
   }
-  // music.loop(); music.setVolume(0.5);
+  
+  // Music looping 
+  // music.loop();
+  // music.setVolume(0.3);
 }
 
 
@@ -195,18 +212,18 @@ function draw() {
   if (gameState === "menu"){
     image(menuBackground, 0, 0, width, height);
     menuScreen();
-  } 
+  }
   else if (gameState === "play"){
     image(playBackground, 0, 0, width, height);
     gameScreen();
-  } 
+  }
   else if (gameState === "gameover"){
     gameOverScreen();
-  } 
+  }
   else if (gameState === "totutorial"){
     image(playBackground, 0, 0, width, height);
     howScreen();
-  } 
+  }
 }
 
 
@@ -214,10 +231,10 @@ function draw() {
 function menuScreen() {
   textAlign(CENTER);
   fill(255);
-  
+ 
   textSize(40);
   text("Reflex Arena", width / 2, height / 3);
-  
+ 
   textSize(20);
   text("1 Easy | 2 Normal | 3 Hard | 4 Totutorial", width / 2, height / 1.35);
 }
@@ -229,14 +246,12 @@ function howScreen() {
   fill(255);
   textAlign(CENTER);
   textSize(20);
-
   player.display();
 
-  // STEP 1: movement
+  // STEP 1: Movement
   if (tutorialStep === 0) {
     text("Use WASD to move", width/2, 100);
     player.move();
-
     tutorialTimer++;
     if (tutorialTimer > 180) {
       tutorialStep = 1;
@@ -244,10 +259,13 @@ function howScreen() {
     }
   }
 
-  // STEP 2: shooting
+
+  // STEP 2: Shooting
   else if (tutorialStep === 1) {
     text("Press SPACE to shoot", width/2, 100);
-    
+
+    // The bullets for the totutorial
+    tutorialBullets();
     tutorialTimer++;
     if (tutorialTimer > 180) {
       tutorialStep = 2;
@@ -255,39 +273,39 @@ function howScreen() {
     }
   }
 
-  // STEP 3: enemy example
+
+  // STEP 3: Enemy example
   else if (tutorialStep === 2) {
     text("Avoid enemies!","Press M for menu ", width/2, 100);
-
     if (frameCount % 100 === 0) {
       enemies.push(new Enemy(random(width), random(height)));
     }
-
     for (let e of enemies) {
       e.follow(player);
       e.display();
     }
-
     player.move();
+    
+    // Bullets
+    tutorialBullets();
   }
-}	
+}
 
 
 
 // Inside the gameScreen
 function gameScreen() {
   let timeLeft = totalTime - (millis() - startTime) / 1000;
-  
   player.move();
   player.display();
-
-  // Spawn enemies seeing if each frame count and spawns new
+  
+  // Spawn enemies seeing  each frame and spawns new
   if (frameCount % spawnRate() === 0) {
     enemies.push(new Enemy(random(width), random(height)));
   }
 
   // Spawn boss once when you get to a certian time
-  if (timeLeft < 30 && boss.length === 0) {
+  if (timeLeft < 30 && boss === null) {
     boss = new Boss();
   }
 
@@ -297,7 +315,7 @@ function gameScreen() {
     e.display();
 
     // Checks the distance bettwen you and the enimies
-    if (dist(player.x, player.y, e.x, e.y) < 20) {
+    if (dist(player.x, player.y, e.x + 10, e.y + 10) < 25) {
       endGame();
     }
   }
@@ -306,7 +324,7 @@ function gameScreen() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     bullets[i].move();
     bullets[i].display();
-    
+   
     // Checks the distance between the bullets and the enemies
     for (let j = enemies.length - 1; j >= 0; j--) {
       if (dist(bullets[i].x, bullets[i].y, enemies[j].x, enemies[j].y) < 15) {
@@ -318,61 +336,58 @@ function gameScreen() {
     }
   }
 
+
   // Boss showing and displaying
   if (boss) {
-    for (let b of boss) {
-      b.move(player);
-      b.display();
-      if (dist(player.x, player.y, b.x, b.y) < 40) {
-        endGame();
-      }
+
+    boss.move(player);
+    boss.display();
+
+    // Checking the distance between player and boss
+    if (dist(player.x, player.y, boss.x, boss.y) < 40) {
+      endGame();
     }
 
-    
-    // checks distance between bullets and boss
+    // Checking the distance between bullets and boss
     for (let i = bullets.length - 1; i >= 0; i--) {
-      if (dist(bullets[i].x, bullets[i].y, boss.x, boss.y) < 40) {
+      if (dist(bullets[i].x, bullets[i].y, boss.x + boss.width / 2, boss.y + boss.height / 2) < 40) {
         boss.health -= 5;
         bullets.splice(i, 1);
       }
     }
-    
+   
     // checks if boss is dead
     if (boss.health <= 0) {
       score += 500;
-      boss = [];
+      boss = null;
     }
   }
 
-  // updating the game
 
+  // updating the game
   score++;
   fill(255);
   textSize(16);
   text(`Score: ${score}`, 70, 20);
   text("Time:" + floor(timeLeft), 70, 40);
-  // if (music && !music.isPlaying()) music.loop();
-
   if (timeLeft <= 0) {
     score--;
     endGame();
   }
 }
 
-  
+
 // How fast the Particles spawn
 function spawnRate() {
   if (difficulty === "easy"){
     return 120;
-  } 
+  }
   if (difficulty === "normal"){
     return 80;
-  } 
+  }
   if (difficulty === "hard"){
     return 50;
-    boss.push(new Boss());
-    boss.push(new Boss());
-  } 
+  }
 }
 
 
@@ -392,11 +407,33 @@ function gameOverScreen() {
 
 function endGame() {
   gameState = "gameover";
+  // deathSound.play();
   if (score > bestScore) {
     bestScore = score;
     storeItem("bestScore", bestScore);
   }
-  // if (music) music.stop();
+}
+
+
+// Cool down bullets so you cant stand still and just kill
+function shootBullet() {
+  if (millis() - lastShot > shootCooldown) {
+    bullets.push(new Bullet(player.x, player.y));
+    // shootSound.play();
+    lastShot = millis();
+  }
+}
+
+
+// Bullets for the toutorial step
+function tutorialBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    bullets[i].move();
+    bullets[i].display();
+    if (bullets[i].y < 0) {
+      bullets.splice(i, 1);
+    }
+  }
 }
 
 
@@ -405,7 +442,7 @@ function keyPressed() {
   if (gameState === "menu") {
     if (key === "1"){
       startGame("easy");
-    } 
+    }
     if (key === "2"){
       startGame("normal");
     }
@@ -416,15 +453,17 @@ function keyPressed() {
       gameState = "totutorial";
     }
   }
+  
   // Keys not to go to a specific mode
   if (gameState === "totutorial" && key === "m") {
     gameState = "menu";
   }
-
   if (gameState === "play" && key === " ") {
-    bullets.push(new Bullet(player.x, player.y));
+    shootBullet();
   }
-
+  if (gameState === "totutorial" && key === " ") {
+    shootBullet();
+  }
   if (gameState === "gameover" && key === "r") {
     gameState = "menu";
   }
@@ -435,11 +474,9 @@ function keyPressed() {
 function startGame(mode) {
   difficulty = mode;
   gameState = "play";
-
   enemies = [];
   bullets = [];
-  boss = 0;
-
+  boss = null;
   startTime = millis();
   score = 0;
 }
