@@ -3,8 +3,8 @@ My project will be an "reaction time" game, where there are ai figures ruuning a
 
 ## Needs To Have
 - Diffrent difficulty modes✅
-- Level selection screen
-    - Totutorial
+- Level selection screen✅
+    - Totutorial✅
     - Easy✅
     - Meduim✅
     - Hard✅
