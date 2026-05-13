@@ -41,10 +41,10 @@ function preload(){
   spaceShip = loadImage("space.avif");
   alienShip =  loadImage("alienship.jpg");
 
-  // // SOUND FILES
-  // shootSound = loadSound("shoot.mp3");
-  // deathSound = loadSound("death.mp3");
-  // music = loadSound("music.mp3");
+  // SOUND FILES
+  shootSound = loadSound("shoot.mp3");
+  deathSound = loadSound("death.mp3");
+  music = loadSound("music.mp3");
 }
 
 
