@@ -113,10 +113,8 @@ class Enemy {
     let dy = player.y - this.y;
     let d = dist(this.x, this.y, player.x, player.y);
 
-
     this.x += dx / d * this.speed;
     this.y += dy / d * this.speed;
-
 
     // telportation for hard and meduim
     if (difficulty === "normal" || difficulty === "hard") {
@@ -150,12 +148,10 @@ class Boss {
     this.height = 60;
   }
 
-
   move(player) {
     this.x += (player.x - this.x) * 0.05;
     this.y += (player.y - this.y) *0.05;
   }
-
 
   display() {
     fill(200, 0, 200);
