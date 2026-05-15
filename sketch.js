@@ -41,10 +41,10 @@ function preload(){
   spaceShip = loadImage("space.avif");
   alienShip =  loadImage("alienship.jpg");
 
-  // SOUND FILES
-  shootSound = loadSound("shoot.mp3");
-  deathSound = loadSound("death.mp3");
-  music = loadSound("music.mp3");
+//   // SOUND FILES
+//   shootSound = loadSound("shoot.mp3");
+//   deathSound = loadSound("death.mp3");
+//   music = loadSound("music.mp3");
 }
 
 
@@ -91,7 +91,7 @@ class Player {
     this.y = constrain(this.y, this.radius, height - this.radius);
   }
   display() {
-    image(spaceShip, this.x - 25, this.y - 25, 50, 50);
+    image(spaceShip, this.x - 25, this.y - 25, 55, 55);
   }
 }
 
@@ -273,11 +273,13 @@ function howScreen() {
   // STEP 3: Enemy example
   else if (tutorialStep === 2) {
     text("Avoid enemies!","Press M for menu ", width/2, 100);
-    if (frameCount % 100 === 0) {
+    if (frameCount % 100 === 0 && enemies.length < 5) {
       enemies.push(new Enemy(random(width), random(height)));
     }
     for (let e of enemies) {
-      e.follow(player);
+      if(dist(e.x,e.y,player.x,player.y)>5){
+        e.follow(player);
+      }
       e.display();
     }
     player.move();
@@ -411,7 +413,7 @@ function endGame() {
 }
 
 
-// Cool down bullets so you cant stand still and just kill
+// Cool down bullets so you cant stand still and just shoot
 function shootBullet() {
   if (millis() - lastShot > shootCooldown) {
     bullets.push(new Bullet(player.x, player.y));
