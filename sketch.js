@@ -500,3 +500,5 @@ function startGame(mode) {
   wave = 1;
   enemiesKilled = 0;
 }
+
+// still have to fix waves and toturial 
