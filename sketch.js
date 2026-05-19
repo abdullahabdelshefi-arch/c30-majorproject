@@ -33,6 +33,10 @@ let shootCooldown = 300;
 let shootSound;
 let deathSound;
 let music;
+let wave = 1;
+let enemiesKilled = 0;
+let enemiesPerWave = 10;
+
 
 
 function preload(){
@@ -41,10 +45,10 @@ function preload(){
   spaceShip = loadImage("space.avif");
   alienShip =  loadImage("alienship.jpg");
 
-//   // SOUND FILES
-//   shootSound = loadSound("shoot.mp3");
-//   deathSound = loadSound("death.mp3");
-//   music = loadSound("music.mp3");
+  // SOUND FILES
+  shootSound = loadSound("shoot.mp3");
+  deathSound = loadSound("death.mp3");
+  music = loadSound("music.mp3");
 }
 
 
@@ -198,8 +202,8 @@ function setup() {
   }
   
   // Music looping 
-  // music.loop();
-  // music.setVolume(0.3);
+  music.loop();
+  music.setVolume(0.3);
 }
 
 
@@ -294,11 +298,24 @@ function howScreen() {
 // Inside the gameScreen
 function gameScreen() {
   let timeLeft = totalTime - (millis() - startTime) / 1000;
+  
   player.move();
   player.display();
-  
+
+  // the 5 waves for each level sees if diffuculty is hard to increase speed each time 
+  text("Wave: " + wave, 70, 60);
+  if (enemiesKilled >= wave * enemiesPerWave &&enemies.length === 0) {
+    wave++;
+  }
+  if (difficulty === "hard") {
+    this.speed = random(1, 3) + wave * 0.2;
+  }
+  else {
+    this.speed = random(1, 3);
+  }
+
   // Spawn enemies seeing  each frame and spawns new
-  if (frameCount % spawnRate() === 0) {
+  if (frameCount % spawnRate() === 0 && enemiesKilled < wave * enemiesPerWave) {
     enemies.push(new Enemy(random(width), random(height)));
   }
 
@@ -329,6 +346,7 @@ function gameScreen() {
         enemies.splice(j, 1);
         bullets.splice(i, 1);
         score += 20;
+        enemiesKilled++;
         break;
       }
     }
@@ -337,10 +355,9 @@ function gameScreen() {
 
   // Boss showing and displaying
   if (boss) {
-
     boss.move(player);
     boss.display();
-
+    
     // Checking the distance between player and boss
     if (dist(player.x, player.y, boss.x, boss.y) < 40) {
       endGame();
@@ -405,7 +422,7 @@ function gameOverScreen() {
 
 function endGame() {
   gameState = "gameover";
-  // deathSound.play();
+  deathSound.play();
   if (score > bestScore) {
     bestScore = score;
     storeItem("bestScore", bestScore);
@@ -417,7 +434,7 @@ function endGame() {
 function shootBullet() {
   if (millis() - lastShot > shootCooldown) {
     bullets.push(new Bullet(player.x, player.y));
-    // shootSound.play();
+    shootSound.play();
     lastShot = millis();
   }
 }
@@ -472,9 +489,14 @@ function keyPressed() {
 function startGame(mode) {
   difficulty = mode;
   gameState = "play";
+  
   enemies = [];
   bullets = [];
   boss = null;
+  
   startTime = millis();
   score = 0;
+  
+  wave = 1;
+  enemiesKilled = 0;
 }
