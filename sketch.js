@@ -20,23 +20,28 @@ let gameState = "menu";
 let score = 0;
 let bestScore = 0;
 let difficulty = "normal";
+
+let totalTime = 60;
+let tutorialStep = 0;
+let tutorialTimer = 0;
+let startTime;
+let lastShot = 0;
+let shootCooldown = 600;
+
 let menuBackground;
 let playBackground;
 let spaceShip;
 let alienShip;
-let startTime;
-let totalTime = 60;
-let tutorialStep = 0;
-let tutorialTimer = 0;
-let lastShot = 0;
-let shootCooldown = 300;
 let shootSound;
 let deathSound;
 let music;
+
 let wave = 1;
 let enemiesKilled = 0;
 let enemiesPerWave = 10;
-
+let waveCleared = false;
+let bossSpawned = false;
+let enemiesThisWave = 0;
 
 
 function preload(){
@@ -100,12 +105,17 @@ class Player {
 }
 
 
-// Enemy Class (Computer)
+// Enemy Class
 class Enemy {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.speed = random(1, 3);
+    if (difficulty === "hard") {
+      this.speed = random(1, 3) + wave * 0.2;
+    }
+    else {
+      this.speed = random(1, 3);
+    }
     this.width = 20;
     this.height = 20;
   }
@@ -147,7 +157,7 @@ class Boss {
   constructor() {
     this.x = width / 2;
     this.y = 100;
-    this.health = 200;
+    this.health = 10;
     this.width = 60;
     this.height = 60;
   }
@@ -290,9 +300,25 @@ function howScreen() {
     
     // Bullets
     tutorialBullets();
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      bullets[i].move();
+      bullets[i].display();
+      // Remove off screen bullets
+      if (bullets[i].y < 0) {
+        bullets.splice(i, 1);
+        continue;
+      }
+      // Kill tutorial enemies
+      for (let j = enemies.length - 1; j >= 0; j--) {
+        if (dist(bullets[i].x,bullets[i].y,enemies[j].x,enemies[j].y) < 20) {
+          enemies.splice(j, 1);
+          bullets.splice(i, 1);
+          break;
+        }
+      }
+    }
   }
 }
-
 
 
 // Inside the gameScreen
@@ -302,20 +328,15 @@ function gameScreen() {
   player.move();
   player.display();
 
-  // the 5 waves for each level sees if diffuculty is hard to increase speed each time 
+  // the 5 waves for each level 
   text("Wave: " + wave, 70, 60);
-  if (enemiesKilled >= wave * enemiesPerWave &&enemies.length === 0) {
-    wave++;
-  }
-  if (difficulty === "hard") {
-    this.speed = random(1, 3) + wave * 0.2;
-  }
-  else {
-    this.speed = random(1, 3);
+  if (frameCount % spawnRate() === 0 && enemiesThisWave < enemiesPerWave && enemies.length < 15) {
+    enemies.push(new Enemy(random(width), random(height)));
+    enemiesThisWave++;
   }
 
   // Spawn enemies seeing  each frame and spawns new
-  if (frameCount % spawnRate() === 0 && enemiesKilled < wave * enemiesPerWave) {
+  if (frameCount % spawnRate() === 0 && enemiesKilled < wave * enemiesPerWave && enemies.length < 15) {
     enemies.push(new Enemy(random(width), random(height)));
   }
 
@@ -324,7 +345,7 @@ function gameScreen() {
     boss = new Boss();
   }
 
-  //  Normal enemies
+  // Normal enemies
   for (let e of enemies) {
     e.follow(player);
     e.display();
@@ -352,7 +373,6 @@ function gameScreen() {
     }
   }
 
-
   // Boss showing and displaying
   if (boss) {
     boss.move(player);
@@ -371,10 +391,13 @@ function gameScreen() {
       }
     }
    
-    // checks if boss is dead
     if (boss.health <= 0) {
       score += 500;
       boss = null;
+      wave++;
+      enemiesThisWave = 0;
+      bossSpawned = false;
+      score += 200;
     }
   }
 
@@ -389,6 +412,8 @@ function gameScreen() {
     score--;
     endGame();
   }
+
+  drawCooldownBar();
 }
 
 
@@ -449,6 +474,26 @@ function tutorialBullets() {
       bullets.splice(i, 1);
     }
   }
+}
+
+// Cooldown Bar
+function drawCooldownBar() {
+  let barWidth = 200;
+  let barHeight = 20;
+  let ready = constrain((millis() - lastShot) / shootCooldown,0,1);
+  
+  // Background
+  fill(100);
+  rect(width / 2 - 100, height - 40, barWidth, barHeight);
+  
+  // Filled part
+  fill(0, 255, 100);
+  rect(width / 2 - 100,height - 40, barWidth * ready, barHeight);
+  
+  fill(255);
+  textSize(12);
+  textAlign(CENTER);
+  text("Bullet Cooldown", width / 2, height - 45);
 }
 
 
