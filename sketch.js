@@ -26,7 +26,7 @@ let tutorialStep = 0;
 let tutorialTimer = 0;
 let startTime;
 let lastShot = 0;
-let shootCooldown = 600;
+let shootCooldown = 0;
 
 let menuBackground;
 let playBackground;
@@ -38,10 +38,10 @@ let music;
 
 let wave = 1;
 let enemiesKilled = 0;
-let enemiesPerWave = 10;
-let waveCleared = false;
+let enemiesPerWave = 0;
 let bossSpawned = false;
 let enemiesThisWave = 0;
+let maxWaves = 5;
 
 
 function preload(){
@@ -330,18 +330,13 @@ function gameScreen() {
 
   // the 5 waves for each level 
   text("Wave: " + wave, 70, 60);
-  if (frameCount % spawnRate() === 0 && enemiesThisWave < enemiesPerWave && enemies.length < 15) {
+  if (frameCount % spawnRate() === 0 && enemiesThisWave < enemiesPerWave) {
     enemies.push(new Enemy(random(width), random(height)));
     enemiesThisWave++;
   }
 
-  // Spawn enemies seeing  each frame and spawns new
-  if (frameCount % spawnRate() === 0 && enemiesKilled < wave * enemiesPerWave && enemies.length < 15) {
-    enemies.push(new Enemy(random(width), random(height)));
-  }
-
   // Spawn boss once when you get to a certian time
-  if (timeLeft < 30 && boss === null) {
+  if (enemiesThisWave === enemiesPerWave && boss === null && maxWaves <= 5) {
     boss = new Boss();
   }
 
@@ -412,7 +407,6 @@ function gameScreen() {
     score--;
     endGame();
   }
-
   drawCooldownBar();
 }
 
@@ -499,6 +493,8 @@ function drawCooldownBar() {
 
 // When keys are pressed to go back to a certian area
 function keyPressed() {
+  userStartAudio();
+
   if (gameState === "menu") {
     if (key === "1"){
       startGame("easy");
@@ -526,6 +522,7 @@ function keyPressed() {
   }
   if (gameState === "gameover" && key === "r") {
     gameState = "menu";
+    enemiesThisWave = 0;
   }
 }
 
@@ -544,6 +541,5 @@ function startGame(mode) {
   
   wave = 1;
   enemiesKilled = 0;
+  enemiesThisWave = 0;
 }
-
-// still have to fix waves and toturial 
