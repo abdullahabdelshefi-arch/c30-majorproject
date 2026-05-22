@@ -26,7 +26,7 @@ let tutorialStep = 0;
 let tutorialTimer = 0;
 let startTime;
 let lastShot = 0;
-let shootCooldown = 0;
+let shootCooldown = 600;
 
 let menuBackground;
 let playBackground;
@@ -38,7 +38,7 @@ let music;
 
 let wave = 1;
 let enemiesKilled = 0;
-let enemiesPerWave = 0;
+let enemiesPerWave = 3;
 let bossSpawned = false;
 let enemiesThisWave = 0;
 let maxWaves = 5;
@@ -49,6 +49,7 @@ function preload(){
   playBackground = loadImage("background.jpg");
   spaceShip = loadImage("space.avif");
   alienShip =  loadImage("alienship.jpg");
+  boss = loadImage("boss.png");
 
   // SOUND FILES
   shootSound = loadSound("shoot.mp3");
@@ -57,7 +58,7 @@ function preload(){
 }
 
 
-// Players Class (You)
+// Players Class
 class Player {
   constructor(x, y) {
     this.x = x;
@@ -155,7 +156,7 @@ class Enemy {
 // Bigger Enemy (more shots to kill)
 class Boss {
   constructor() {
-    this.x = width / 2;
+    this.x = 30;
     this.y = 100;
     this.health = 10;
     this.width = 60;
@@ -168,8 +169,7 @@ class Boss {
   }
 
   display() {
-    fill(200, 0, 200);
-    rect(this.x, this.y, this.width, this.height);
+    image(boss,this.x,this.y,60,60);
   
     // Writing
     fill(255);
@@ -273,7 +273,6 @@ function howScreen() {
   // STEP 2: Shooting
   else if (tutorialStep === 1) {
     text("Press SPACE to shoot", width/2, 100);
-
     // The bullets for the totutorial
     tutorialBullets();
     tutorialTimer++;
@@ -286,7 +285,8 @@ function howScreen() {
 
   // STEP 3: Enemy example
   else if (tutorialStep === 2) {
-    text("Avoid enemies!","Press M for menu ", width/2, 100);
+    text("Press M To Return", width/2, 100);
+    drawCooldownBar();
     if (frameCount % 100 === 0 && enemies.length < 5) {
       enemies.push(new Enemy(random(width), random(height)));
     }
@@ -513,6 +513,7 @@ function keyPressed() {
   // Keys not to go to a specific mode
   if (gameState === "totutorial" && key === "m") {
     gameState = "menu";
+    tutorialStep = 0;
   }
   if (gameState === "play" && key === " ") {
     shootBullet();
