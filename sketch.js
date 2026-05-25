@@ -47,9 +47,9 @@ let maxWaves = 5;
 function preload(){
   menuBackground = loadImage("menu.jpg");
   playBackground = loadImage("background.jpg");
-  spaceShip = loadImage("space.avif");
+  spaceShip = loadImage("space.png");
   alienShip =  loadImage("alienship.jpg");
-  boss = loadImage("boss.png");
+  bossImage = loadImage("boss.png");
 
   // SOUND FILES
   shootSound = loadSound("shoot.mp3");
@@ -164,12 +164,12 @@ class Boss {
   }
 
   move(player) {
-    this.x += (player.x - this.x) * 0.05;
-    this.y += (player.y - this.y) *0.05;
+    this.x += (player.x - this.x) * 0.04;
+    this.y += (player.y - this.y) *0.04;
   }
 
   display() {
-    image(boss,this.x,this.y,60,60);
+    image(bossImage,this.x,this.y,this.width,this.height);
   
     // Writing
     fill(255);
@@ -266,6 +266,7 @@ function howScreen() {
     if (tutorialTimer > 180) {
       tutorialStep = 1;
       tutorialTimer = 0;
+      bullets = [];
     }
   }
 
@@ -279,6 +280,7 @@ function howScreen() {
     if (tutorialTimer > 180) {
       tutorialStep = 2;
       tutorialTimer = 0;
+      bullets = [];
     }
   }
 
@@ -374,7 +376,7 @@ function gameScreen() {
     boss.display();
     
     // Checking the distance between player and boss
-    if (dist(player.x, player.y, boss.x, boss.y) < 40) {
+    if (dist(player.x, player.y, boss.x, boss.y) < 30) {
       endGame();
     }
 
