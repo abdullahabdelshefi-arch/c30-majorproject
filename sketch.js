@@ -127,9 +127,23 @@ class Enemy {
     let dx = player.x - this.x;
     let dy = player.y - this.y;
     let d = dist(this.x, this.y, player.x, player.y);
+    if(difficulty !== hard){
+      this.x += dx / d * this.speed;
+      this.y += dy / d * this.speed;
+    }
+    else{
+      // Player movement prediction
+      let playerVelocityX = player.x - playerLastX;
+      let playerVelocityY = player.y - playerLastY;
 
-    this.x += dx / d * this.speed;
-    this.y += dy / d * this.speed;
+      // Predict future player location
+      let futureX = player.x + playerVelocityX * 15;
+      let futureY = player.y + playerVelocityY * 15;
+
+      // Random behaviour style for enemies
+      // Makes them feel alive instead of all doing same thing
+      let style = this.x % 3;
+    }
 
     // telportation for hard and meduim
     if (difficulty === "normal" || difficulty === "hard") {
