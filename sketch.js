@@ -4,11 +4,7 @@
 // 4/22/2026
 //
 // Extra for Experts:
-// - Sound Effects
-// - Best Score from same browser (local)
-// - Searched how the computer can follow the player
-// - Used null which isnt the same as just unknown;
-//    found out that null is something you intentionally want it to be unknown searched and used vedo to find out what it meant when I saw it before
+// making a system in hard mode rather then just follwing player it will try to trap him nice to have "ai system"/ will not be all moving toghther toward you 
 
 
 // Variables
@@ -127,10 +123,12 @@ class Enemy {
     let dx = player.x - this.x;
     let dy = player.y - this.y;
     let d = dist(this.x, this.y, player.x, player.y);
-    if(difficulty !== hard){
+
+    if(difficulty !== "hard"){
       this.x += dx / d * this.speed;
       this.y += dy / d * this.speed;
     }
+    
     else{
       // Player movement prediction
       let playerVelocityX = player.x - playerLastX;
@@ -141,8 +139,20 @@ class Enemy {
       let futureY = player.y + playerVelocityY * 15;
 
       // Random behaviour style for enemies
-      // Makes them feel alive instead of all doing same thing
+      // Makes them feel alive instead of all doing same thing and getting mushed toghether
       let style = this.x % 3;
+
+      // What to do in each type 
+      if(style < 1){
+        let huntDx = futureX - this.x;
+        let huntDY = futureY - this.y;
+      }
+      else if (style < 2){
+
+      }
+      else{
+
+      }
     }
 
     // telportation for hard and meduim
