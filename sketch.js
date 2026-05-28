@@ -437,7 +437,7 @@ function gameScreen() {
 }
 
 
-// How fast the Particles spawn
+// How fast the enimies spawn
 function spawnRate() {
   if (difficulty === "easy"){
     return 120;
