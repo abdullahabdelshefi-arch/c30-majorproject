@@ -34,7 +34,7 @@ let music;
 
 let wave = 1;
 let enemiesKilled = 0;
-let enemiesPerWave = 3;
+let enemiesPerWave = 10;
 let bossSpawned = false;
 let enemiesThisWave = 0;
 let maxWaves = 5;
@@ -130,6 +130,10 @@ class Enemy {
     }
     
     else{
+      let playerLastX;
+      let playerLastY;
+
+      
       // Player movement prediction
       let playerVelocityX = player.x - playerLastX;
       let playerVelocityY = player.y - playerLastY;
@@ -144,14 +148,56 @@ class Enemy {
 
       // What to do in each type 
       if(style < 1){
+        // Used chatgpt to understand the math I have to do and did it with code
         let huntDx = futureX - this.x;
-        let huntDY = futureY - this.y;
-      }
-      else if (style < 2){
+        let huntDy = futureY - this.y;
+        let huntD = dist(this.x, this.y, futureX, futureY);
 
+        this.x += huntDx / huntD * this.speed * 1.4;
+        this.y += huntDy / huntD * this.speed * 1.4;
+      }
+      // Side attackers
+      else if (style < 2){
+        let sideX = futureX + dy * 0.5;
+        let sideY = futureY - dx * 0.5;
+
+        let sideDx = sideX - this.x;
+        let sideDy = sideY - this.y;
+        let sideD = dist(this.x, this.y, sideX, sideY);
+
+        this.x += sideDx / sideD * this.speed * 1.2;
+        this.y += sideDy / sideD * this.speed * 1.2;
       }
       else{
+        // Cuts off route of the player more random
+        let trapX = player.x + playerVelocityX * 30;
+        let trapY = player.y + playerVelocityY * 30;
 
+        let trapDX = trapX - this.x;
+        let trapDY = trapY - this.y;
+        let trapD = dist(this.x, this.y, trapX, trapY);
+
+        this.x += trapDX / trapD * this.speed;
+        this.y += trapDY / trapD * this.speed;
+      }
+      
+      // Boost to you when its close
+      if (d < 150) {
+        this.x += dx / d * this.speed * 0.8;
+        this.y += dy / d * this.speed * 0.8;
+      }
+      
+      // Brevent from stacking
+      for (let other of enemies) {
+        if (other !== this) {
+          let space = dist(this.x, this.y, other.x, other.y);
+          if (space < 40) {
+            let pushX = this.x - other.x;
+            let pushY = this.y - other.y;
+            this.x += pushX * 0.03;
+            this.y += pushY * 0.03;
+          }
+        }
       }
     }
 
@@ -182,7 +228,7 @@ class Boss {
   constructor() {
     this.x = 30;
     this.y = 100;
-    this.health = 10;
+    this.health = 20;
     this.width = 60;
     this.height = 60;
   }
@@ -238,6 +284,9 @@ function setup() {
   // Music looping 
   music.loop();
   music.setVolume(0.3);
+
+  playerLastX = width/2;
+  playerLastY = height/2;
 }
 
 
