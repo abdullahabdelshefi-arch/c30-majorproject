@@ -4,7 +4,8 @@
 // 4/22/2026
 //
 // Extra for Experts:
-// making a system in hard mode rather then just follwing player it will try to trap him nice to have "ai system"/ will not be all moving toghther toward you 
+// making a system in hard mode rather then just follwing player it will try to trap him nice to have "ai system"/ 
+// will not be all moving toghther toward you they will be spread out all acting diffrently with diffrent speeds and moves wierd so you wont be able to know where it will go 
 
 
 // Variables
@@ -16,6 +17,8 @@ let gameState = "menu";
 let score = 0;
 let bestScore = 0;
 let difficulty = "normal";
+let playerLastX;
+let playerLastY;
 
 let totalTime = 60;
 let tutorialStep = 0;
@@ -34,7 +37,7 @@ let music;
 
 let wave = 1;
 let enemiesKilled = 0;
-let enemiesPerWave = 10;
+let enemiesPerWave = 3;
 let bossSpawned = false;
 let enemiesThisWave = 0;
 let maxWaves = 5;
@@ -130,10 +133,6 @@ class Enemy {
     }
     
     else{
-      let playerLastX;
-      let playerLastY;
-
-      
       // Player movement prediction
       let playerVelocityX = player.x - playerLastX;
       let playerVelocityY = player.y - playerLastY;
@@ -183,8 +182,8 @@ class Enemy {
       
       // Boost to you when its close
       if (d < 150) {
-        this.x += dx / d * this.speed * 0.8;
-        this.y += dy / d * this.speed * 0.8;
+        this.x += dx / d * this.speed * 0.3;
+        this.y += dy / d * this.speed * 0.3;
       }
       
       // Brevent from stacking
@@ -483,6 +482,9 @@ function gameScreen() {
     endGame();
   }
   drawCooldownBar();
+  playerLastX = player.x;
+  playerLastY = player.y;
+
 }
 
 
