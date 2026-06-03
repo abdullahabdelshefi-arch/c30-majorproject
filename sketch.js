@@ -25,7 +25,7 @@ let tutorialStep = 0;
 let tutorialTimer = 0;
 let startTime;
 let lastShot = 0;
-let shootCooldown = 600;
+let shootCooldown = 520;
 
 let menuBackground;
 let playBackground;
@@ -37,7 +37,7 @@ let music;
 
 let wave = 1;
 let enemiesKilled = 0;
-let enemiesPerWave = 3;
+let enemiesPerWave = 7;
 let bossSpawned = false;
 let enemiesThisWave = 0;
 let maxWaves = 5;
@@ -200,7 +200,7 @@ class Enemy {
       }
     }
 
-    // telportation for hard and meduim
+    // Telportation for hard and meduim
     if (difficulty === "normal" || difficulty === "hard") {
       if (this.x < 0){
         this.x = width;
@@ -402,7 +402,7 @@ function gameScreen() {
   player.move();
   player.display();
 
-  // the 5 waves for each level 
+  // The 5 waves for each level 
   text("Wave: " + wave, 70, 60);
   if (frameCount % spawnRate() === 0 && enemiesThisWave < enemiesPerWave) {
     enemies.push(new Enemy(random(width), random(height)));
@@ -471,7 +471,7 @@ function gameScreen() {
   }
 
 
-  // updating the game
+  // Updating the game
   score++;
   fill(255);
   textSize(16);
@@ -518,6 +518,7 @@ function gameOverScreen() {
 
 function endGame() {
   gameState = "gameover";
+  deathSound.setVolume(2.0);
   deathSound.play();
   if (score > bestScore) {
     bestScore = score;
@@ -591,6 +592,9 @@ function keyPressed() {
   if (gameState === "totutorial" && key === "m") {
     gameState = "menu";
     tutorialStep = 0;
+  }
+  if (gameState === "play" && key === "m") {
+    gameState = "menu";
   }
   if (gameState === "play" && key === " ") {
     shootBullet();

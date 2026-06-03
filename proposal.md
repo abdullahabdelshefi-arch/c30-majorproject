@@ -18,8 +18,8 @@ My project will be an "reaction time" game, where there are ai figures ruuning a
 
 ## Nice To Have
 - Many diffrent waves in each level not just one✅
-- Advance Ai system that tries to trap you (in hard mode)
-- 5 waves in each level✅ 
+- Advance Ai system that tries to trap you and not stick toghther (in hard mode)✅ 
+- 5 waves in each level 
 - Money spawing to collect 
 - Shop where you can chnage your avatar skin 
 - Screen moves with the charecter 
