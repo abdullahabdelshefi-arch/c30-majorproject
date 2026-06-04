@@ -444,7 +444,12 @@ function gameScreen() {
 
     // Checks the distance bettwen you and the enimies
     if (dist(player.x, player.y, e.x + 10, e.y + 10) < 25) {
-      endGame();
+      if (score >= bestScore) {
+        gameState = "win";
+      }
+      else {
+        endGame();
+      }
     }
   }
 
@@ -472,7 +477,12 @@ function gameScreen() {
     
     // Checking the distance between player and boss
     if (dist(player.x, player.y, boss.x, boss.y) < 30) {
-      endGame();
+      if (score >= bestScore) {
+        gameState = "win";
+      }
+      else {
+        endGame();
+      }
     }
 
     // Checking the distance between bullets and boss
@@ -500,7 +510,7 @@ function gameScreen() {
   textSize(16);
   text(`Score: ${score}`, 70, 20);
   text("Time:" + floor(timeLeft), 70, 40);
-  if (timeLeft <= 0) {
+  if (timeLeft === 0) {
     if (score >= bestScore) {
       gameState = "win";
     }
@@ -540,7 +550,7 @@ function gameOverScreen() {
   text("Score: " + score, width / 2, height / 2);
   text("Best: " + bestScore, width / 2, height / 2 + 30);
   text("Press R to Restart", width / 2, height / 2 + 80);
-  text("Wave Reached: " + wave, width/2, height/2 + 60);
+  text("Wave Reached: " + wave, width/2, height/2 + 55);
 }
 
 
@@ -563,7 +573,7 @@ function winScreen() {
   textAlign(CENTER);
 
   textSize(40);
-  text("YOU WIN!", width/2, height/2 - 60);
+  text("New Best Score!", width/2, height/2 - 60);
 
   textSize(20);
   text("Score: " + score, width/2, height/2);
