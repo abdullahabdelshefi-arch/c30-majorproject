@@ -12,14 +12,14 @@
 
 ## Programer Advice
 
-- Say what wave the gamer made it too 
-- Make level easy actually easier
-- Good controls and good tutorial
+- Say what wave the gamer made it too ✅
+- Make level easy actually easier ✅
+- Good controls and good tutorial 
 - Less cooldown for shooting ✅
-- Make the spaceship have an option where u can rotate it’s axis with the arrow keys
+- Make the spaceship have an option where u can rotate it’s axis with the arrow keys ✅
 - The sound “game over” should have a small pause before and it would be nice if a little louder✅
 - Instead of the m button just functioning in tutorial it should also work on all levels as well✅
 
 ## My Known Bugs
 
-- I want to make it so that if the score is higher then best score when you have a win screen 
+- I want to make it so that if the score is higher then best score when you have a win screen ✅

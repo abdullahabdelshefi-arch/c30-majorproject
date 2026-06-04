@@ -64,6 +64,7 @@ class Player {
     this.y = y;
     this.radius = 20;
     this.speed = 5;
+    this.angle = 0;
   }
 
 
@@ -98,9 +99,22 @@ class Player {
     }
     this.x = constrain(this.x, this.radius, width - this.radius);
     this.y = constrain(this.y, this.radius, height - this.radius);
+
+    if (keyIsDown(LEFT_ARROW)) {
+      this.angle -= 0.08;
+    }
+    if (keyIsDown(RIGHT_ARROW)) {
+      this.angle += 0.08;
+    }
+
   }
   display() {
-    image(spaceShip, this.x - 25, this.y - 25, 55, 55);
+    push();
+    translate(this.x, this.y);
+    rotate(this.angle);
+    imageMode(CENTER);
+    image(spaceShip, 0, 0, 55, 55);
+    pop();
   }
 }
 
@@ -113,8 +127,11 @@ class Enemy {
     if (difficulty === "hard") {
       this.speed = random(1, 3) + wave * 0.2;
     }
-    else {
+    else if(difficulty === "normal") {
       this.speed = random(1, 3);
+    }
+    else{
+      this.speed = random(0.9, 2);
     }
     this.width = 20;
     this.height = 20;
@@ -306,6 +323,10 @@ function draw() {
     image(playBackground, 0, 0, width, height);
     howScreen();
   }
+  else if (gameState === "win") {
+    winScreen();
+  }
+
 }
 
 
@@ -339,6 +360,7 @@ function howScreen() {
       tutorialStep = 1;
       tutorialTimer = 0;
       bullets = [];
+      enemies = [];
     }
   }
 
@@ -353,6 +375,7 @@ function howScreen() {
       tutorialStep = 2;
       tutorialTimer = 0;
       bullets = [];
+      enemies = [];
     }
   }
 
@@ -372,6 +395,7 @@ function howScreen() {
     }
     player.move();
     
+    
     // Bullets
     tutorialBullets();
     for (let i = bullets.length - 1; i >= 0; i--) {
@@ -380,7 +404,6 @@ function howScreen() {
       // Remove off screen bullets
       if (bullets[i].y < 0) {
         bullets.splice(i, 1);
-        continue;
       }
       // Kill tutorial enemies
       for (let j = enemies.length - 1; j >= 0; j--) {
@@ -478,20 +501,24 @@ function gameScreen() {
   text(`Score: ${score}`, 70, 20);
   text("Time:" + floor(timeLeft), 70, 40);
   if (timeLeft <= 0) {
-    score--;
-    endGame();
+    if (score >= bestScore) {
+      gameState = "win";
+    }
+    else {
+      endGame();
+    }
   }
+  
   drawCooldownBar();
   playerLastX = player.x;
   playerLastY = player.y;
-
 }
 
 
 // How fast the enimies spawn
 function spawnRate() {
   if (difficulty === "easy"){
-    return 120;
+    return 180;
   }
   if (difficulty === "normal"){
     return 80;
@@ -513,11 +540,13 @@ function gameOverScreen() {
   text("Score: " + score, width / 2, height / 2);
   text("Best: " + bestScore, width / 2, height / 2 + 30);
   text("Press R to Restart", width / 2, height / 2 + 80);
+  text("Wave Reached: " + wave, width/2, height/2 + 60);
 }
 
 
 function endGame() {
   gameState = "gameover";
+  music.stop();
   deathSound.setVolume(2.0);
   deathSound.play();
   if (score > bestScore) {
@@ -525,6 +554,24 @@ function endGame() {
     storeItem("bestScore", bestScore);
   }
 }
+
+// Win screen if score is higher then best score
+function winScreen() {
+  background(0);
+
+  fill(255);
+  textAlign(CENTER);
+
+  textSize(40);
+  text("YOU WIN!", width/2, height/2 - 60);
+
+  textSize(20);
+  text("Score: " + score, width/2, height/2);
+  text("Wave Reached: " + wave, width/2, height/2 + 30);
+
+  text("Press R to Return", width/2, height/2 + 90);
+}
+
 
 
 // Cool down bullets so you cant stand still and just shoot
