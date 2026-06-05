@@ -44,6 +44,8 @@ let maxWaves = 5;
 
 
 function preload(){
+  
+  // Images 
   menuBackground = loadImage("menu.jpg");
   playBackground = loadImage("background.jpg");
   spaceShip = loadImage("space.png");
@@ -429,7 +431,6 @@ function howScreen() {
         if (dist(bullets[i].x,bullets[i].y,enemies[j].x,enemies[j].y) < 20) {
           enemies.splice(j, 1);
           bullets.splice(i, 1);
-          break;
         }
       }
     }
@@ -670,11 +671,11 @@ function keyPressed() {
   }
   
   // Keys not to go to a specific mode
-  if (gameState === "totutorial" && key === "m") {
+  if (gameState === "totutorial" && key === "m"|| key === "M") {
     gameState = "menu";
     tutorialStep = 0;
   }
-  if (gameState === "play" && key === "m") {
+  if (gameState === "play" && key === "m"|| key === "M") {
     gameState = "menu";
   }
   if (gameState === "play" && key === " ") {
@@ -683,7 +684,7 @@ function keyPressed() {
   if (gameState === "totutorial" && key === " ") {
     shootBullet();
   }
-  if (gameState === "gameover" && key === "r") {
+  if (gameState === "gameover" && key === "r" || key === "R") {
     gameState = "menu";
     enemiesThisWave = 0;
   }
