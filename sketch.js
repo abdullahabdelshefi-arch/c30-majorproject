@@ -268,15 +268,19 @@ class Boss {
 
 // Sets the bullet class
 class Bullet {
-  constructor(x, y) {
+  constructor(x, y, angle) {
     this.x = x;
     this.y = y;
+    this.angle = angle;
     this.speed = 7;
     this.width = 5;
     this.height = 10;
   }
+
+  // Asked ai for the math how to shoot while rotating 
   move() {
-    this.y -= this.speed;
+    this.x += sin(this.angle) * this.speed;
+    this.y -= cos(this.angle) * this.speed;
   }
 
   display() {
@@ -284,6 +288,7 @@ class Bullet {
     rect(this.x, this.y, this.width, this.height);
   }
 }
+
 
 
 function setup() {
@@ -379,9 +384,23 @@ function howScreen() {
     }
   }
 
+  // STEP 2: Shooting
+  else if (tutorialStep === 2) {
+    text("Use Keys To Rotate", width/2, 100);
+    // The keys for chnaging angle
+    player.move();
+    tutorialTimer++;
+    if (tutorialTimer > 180) {
+      tutorialStep = 3;
+      tutorialTimer = 0;
+      bullets = [];
+      enemies = [];
+    }
+  }
+
 
   // STEP 3: Enemy example
-  else if (tutorialStep === 2) {
+  else if (tutorialStep === 3) {
     text("Press M To Return", width/2, 100);
     drawCooldownBar();
     if (frameCount % 100 === 0 && enemies.length < 5) {
@@ -587,7 +606,12 @@ function winScreen() {
 // Cool down bullets so you cant stand still and just shoot
 function shootBullet() {
   if (millis() - lastShot > shootCooldown) {
-    bullets.push(new Bullet(player.x, player.y));
+
+    let bulletX = player.x + sin(player.angle) * 30;
+    let bulletY = player.y - cos(player.angle) * 30;
+
+    bullets.push(new Bullet(bulletX, bulletY, player.angle));
+
     shootSound.play();
     lastShot = millis();
   }
