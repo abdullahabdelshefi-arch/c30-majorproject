@@ -428,7 +428,7 @@ function howScreen() {
       }
       // Kill tutorial enemies
       for (let j = enemies.length - 1; j >= 0; j--) {
-        if (dist(bullets[i].x,bullets[i].y,enemies[j].x,enemies[j].y) < 20) {
+        if (dist(bullets[i].x, bullets[i].y , enemies[j].x ,enemies[j].y ) < 20) {
           enemies.splice(j, 1);
           bullets.splice(i, 1);
         }
