@@ -420,24 +420,35 @@ function howScreen() {
     // Bullets
     tutorialBullets();
     for (let i = bullets.length - 1; i >= 0; i--) {
+
       bullets[i].move();
       bullets[i].display();
-      
-      // Kill tutorial enemies
+
+      if (bullets[i].y < 0) {
+        bullets.splice(i, 1);
+        continue;
+      }
+
+      let bulletRemoved = false;
+
       for (let j = enemies.length - 1; j >= 0; j--) {
-        if (dist(bullets[i].x, bullets[i].y , enemies[j].x ,enemies[j].y ) < 20) {
+        if (dist(bullets[i].x,bullets[i].y,enemies[j].x,enemies[j].y) < 20) {
+
           enemies.splice(j, 1);
           bullets.splice(i, 1);
+          bulletRemoved = true;
+          break;
         }
       }
 
-      // Remove off screen bullets
-      if (bullets[i].y < 0) {
-        bullets.splice(i, 1);
+      if (bulletRemoved) {
+        continue;
       }
     }
+
   }
 }
+
 
 
 // Inside the gameScreen
