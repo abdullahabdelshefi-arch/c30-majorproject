@@ -422,16 +422,18 @@ function howScreen() {
     for (let i = bullets.length - 1; i >= 0; i--) {
       bullets[i].move();
       bullets[i].display();
-      // Remove off screen bullets
-      if (bullets[i].y < 0) {
-        bullets.splice(i, 1);
-      }
+      
       // Kill tutorial enemies
       for (let j = enemies.length - 1; j >= 0; j--) {
         if (dist(bullets[i].x, bullets[i].y , enemies[j].x ,enemies[j].y ) < 20) {
           enemies.splice(j, 1);
           bullets.splice(i, 1);
         }
+      }
+
+      // Remove off screen bullets
+      if (bullets[i].y < 0) {
+        bullets.splice(i, 1);
       }
     }
   }
