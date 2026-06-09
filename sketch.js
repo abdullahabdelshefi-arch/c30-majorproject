@@ -330,6 +330,10 @@ function draw() {
     image(playBackground, 0, 0, width, height);
     howScreen();
   }
+  else if (gameState === "win") {
+    winScreen();
+  }
+
 }
 
 
@@ -446,7 +450,6 @@ function howScreen() {
 }
 
 
-
 // Inside the gameScreen
 function gameScreen() {
   let timeLeft = totalTime - (millis() - startTime) / 1000;
@@ -473,7 +476,10 @@ function gameScreen() {
 
     // Checks the distance bettwen you and the enimies
     if (dist(player.x, player.y, e.x + 10, e.y + 10) < 25) {
-      if (score > bestScore) {
+      if (score >= bestScore) {
+        gameState = "win";
+      }
+      else {
         endGame();
       }
     }
@@ -503,10 +509,13 @@ function gameScreen() {
     
     // Checking the distance between player and boss
     if (dist(player.x, player.y, boss.x, boss.y) < 30) {
-      if (score > bestScore) {
+      if (score >= bestScore) {
+        gameState = "win";
+      }
+      else {
         endGame();
       }
-    } 
+    }
 
     // Checking the distance between bullets and boss
     for (let i = bullets.length - 1; i >= 0; i--) {
@@ -535,6 +544,9 @@ function gameScreen() {
   text("Time:" + floor(timeLeft), 70, 40);
   if (timeLeft === 0) {
     if (score >= bestScore) {
+      gameState = "win";
+    }
+    else {
       endGame();
     }
   }
@@ -685,10 +697,6 @@ function keyPressed() {
     shootBullet();
   }
   if (gameState === "gameover" && key === "r") {
-    gameState = "menu";
-    enemiesThisWave = 0;
-  }
-  if (winScreen() && key === "r") {
     gameState = "menu";
     enemiesThisWave = 0;
   }
