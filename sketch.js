@@ -330,10 +330,6 @@ function draw() {
     image(playBackground, 0, 0, width, height);
     howScreen();
   }
-  else if (gameState === "win") {
-    winScreen();
-  }
-
 }
 
 
