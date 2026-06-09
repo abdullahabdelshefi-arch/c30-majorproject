@@ -697,7 +697,11 @@ function keyPressed() {
   if (gameState === "totutorial" && key === " ") {
     shootBullet();
   }
-  if (gameState === "gameover" || gameState === "win"  && key === "r") {
+  if (gameState === "gameover" && key === "r") {
+    gameState = "menu";
+    enemiesThisWave = 0;
+  }
+  if (gameState === "win" && key === "r") {
     gameState = "menu";
     enemiesThisWave = 0;
   }
