@@ -477,11 +477,11 @@ function gameScreen() {
 
     // Checks the distance bettwen you and the enimies
     if (dist(player.x, player.y, e.x + 10, e.y + 10) < 25) {
-      if (score > bestScore) {
-        gameState = "win";
+      if (score <= bestScore) {
+        endGame();
       }
       else {
-        endGame();
+        winScreen();
       }
     }
   }
@@ -510,11 +510,11 @@ function gameScreen() {
     
     // Checking the distance between player and boss
     if (dist(player.x, player.y, boss.x, boss.y) < 30) {
-      if (score > bestScore) {
-        gameState = "win";
+      if (score <= bestScore) {
+        endGame();
       }
       else {
-        endGame();
+        winScreen();
       }
     }
 
@@ -544,11 +544,11 @@ function gameScreen() {
   text(`Score: ${score}`, 70, 20);
   text("Time:" + floor(timeLeft), 70, 40);
   if (timeLeft === 0) {
-    if (score > bestScore) {
-      gameState = "win";
+    if (score <= bestScore) {
+      endGame();
     }
     else {
-      endGame();
+      winScreen();
     }
   }
   
