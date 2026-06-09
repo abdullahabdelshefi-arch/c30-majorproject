@@ -684,11 +684,11 @@ function keyPressed() {
   }
   
   // Keys not to go to a specific mode
-  if (gameState === "totutorial" && key === "m"|| key === "M") {
+  if (gameState === "totutorial" && key === "m") {
     gameState = "menu";
     tutorialStep = 0;
   }
-  if (gameState === "play" && key === "m"|| key === "M") {
+  if (gameState === "play" && key === "m") {
     gameState = "menu";
   }
   if (gameState === "play" && key === " ") {
@@ -697,7 +697,7 @@ function keyPressed() {
   if (gameState === "totutorial" && key === " ") {
     shootBullet();
   }
-  if (gameState === "gameover" && key === "r" || key === "R") {
+  if (gameState === "gameover" && key === "r") {
     gameState = "menu";
     enemiesThisWave = 0;
   }
