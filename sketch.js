@@ -701,7 +701,7 @@ function keyPressed() {
     gameState = "menu";
     enemiesThisWave = 0;
   }
-  if (key === "r") {
+  if (winScreen() && key === "r") {
     gameState = "menu";
     enemiesThisWave = 0;
   }
