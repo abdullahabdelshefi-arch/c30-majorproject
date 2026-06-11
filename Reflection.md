@@ -11,4 +11,4 @@
 
 
 ## Where there any problems I could not fix
-- The sound system still shows an error sometimes, but the sounds and music still work correctly in the game. Other than that, there were no major problems that stopped the game from working. I also had a win screen but it didnt work unless it was on my computer so I had to take it out and have an endgame button. I also couldnt fix when you get a best score it deacresses your best score by one over your actual score.
+- The sound system still shows an error sometimes, but the sounds and music still work correctly in the game. Other than that, there were no major problems that stopped the game from working. I also had a win screen but it didnt work unless it was on my computer so I had to take it out and have an endgame button. I also couldnt fix when you get a best score it deacresses your best score by one over your actual score. Timer also goes to negtives doesnt stop after 0 like it should, now they only die from enimies.
