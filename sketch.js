@@ -5,7 +5,7 @@
 //
 // Extra for Experts:
 // making a system in hard mode rather then just follwing player it will try to trap him nice to have "ai system"/ 
-// will not be all moving toghther toward you they will be spread out all acting diffrently with diffrent speeds and moves wierd so you wont be able to know where it will go 
+// will not be all moving toghther toward you they will be spread out all acting diffrently with diffrent speeds and moves wierd so you wont be able to know where it will go in enemy class 
 
 
 // Variables
